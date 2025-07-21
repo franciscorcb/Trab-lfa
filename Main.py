@@ -6,7 +6,7 @@ def transformar_afn_para_afd(estados, estado_inicial, transicoes, estados_finais
     afd_transicoes = {}
     novos_estados = []
     estados_afd_finais = set()
-    
+
     estado_inicial_str = ",".join(sorted([estado_inicial]))
     fila = deque([estado_inicial_str])
     visitados = set()
@@ -43,7 +43,6 @@ def minimizar_afd(estados, transicoes, estado_inicial, estados_finais, alfabeto)
     pares = list(combinations(estados, 2))
     tabela = {}
 
-    # Inicializa marcações
     for a, b in pares:
         marcado = ((a in estados_finais) != (b in estados_finais))
         tabela[(a, b)] = marcado
@@ -68,7 +67,6 @@ def minimizar_afd(estados, transicoes, estado_inicial, estados_finais, alfabeto)
                     alterado = True
                     break
 
-    # Grupos de equivalência
     grupos = []
     usados = set()
     for estado in estados:
@@ -82,7 +80,6 @@ def minimizar_afd(estados, transicoes, estado_inicial, estados_finais, alfabeto)
         usados.add(estado)
         grupos.append(grupo)
 
-    # Novo mapeamento
     estado_para_grupo = {}
     for grupo in grupos:
         nome = ",".join(sorted(grupo))
@@ -101,7 +98,6 @@ def minimizar_afd(estados, transicoes, estado_inicial, estados_finais, alfabeto)
 
     return sorted(novo_estados), novo_estado_inicial, novo_transicoes, sorted(novo_estados_finais)
 
-# Exibir tabela de transição
 def exibir_tabela_transicao(estados, alfabeto, transicoes):
     max_estado_len = max(len(e) for e in estados)
     max_destino_len = 20
@@ -118,7 +114,6 @@ def exibir_tabela_transicao(estados, alfabeto, transicoes):
             destino = transicoes.get((estado, simbolo), "-")
             row += f"{destino:^{max_destino_len}} | "
         print(row)
-    
     print("-" * len(header))
 
 def main():
@@ -146,12 +141,16 @@ def main():
 
     estados_finais = [e.strip() for e in input("Informe os estados finais: ").split(',')]
 
-    # AFN -> AFD
     afd_estados, afd_inicial, afd_transicoes, afd_finais = transformar_afn_para_afd(
         estados, estado_inicial, transicoes, estados_finais, alfabeto
     )
 
-    # Minimização
+    print("\nAFD gerado (antes da minimização):")
+    print("Estados:", ", ".join(afd_estados))
+    print("Estado inicial:", afd_inicial)
+    print("Estados finais:", ", ".join(afd_finais))
+    exibir_tabela_transicao(afd_estados, alfabeto, afd_transicoes)
+
     min_estados, min_inicial, min_transicoes, min_finais = minimizar_afd(
         afd_estados, afd_transicoes, afd_inicial, afd_finais, alfabeto
     )
@@ -160,10 +159,9 @@ def main():
     print("Estados:", ", ".join(min_estados))
     print("Estado inicial:", min_inicial)
     print("Estados finais:", ", ".join(min_finais))
-
     exibir_tabela_transicao(min_estados, alfabeto, min_transicoes)
 
-    print("\nTransições:")
+    print("\nTransições do AFD Mínimo:")
     for (estado, simbolo), destino in sorted(min_transicoes.items()):
         print(f"{estado}{simbolo}{destino}")
 
