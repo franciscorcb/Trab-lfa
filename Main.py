@@ -116,8 +116,14 @@ def exibir_tabela_transicao(estados, alfabeto, transicoes):
         print(row)
     print("-" * len(header))
 
+def exibir_transicoes(transicoes):
+    print("\nTransições:")
+    for (estado, simbolo), destino in sorted(transicoes.items()):
+        print(f"({estado}) --{simbolo}-->  ({destino})")
+
 def main():
     estados = [e.strip() for e in input("Informe os estados do autômato: ").split(',')]
+
     estado_inicial = input("Informe o estado inicial: ").strip()
 
     print("Informe a função programa:")
@@ -137,33 +143,27 @@ def main():
         elif len(entrada) == 2:
             origem = entrada[0]
             destino = entrada[1]
-            transicoes[(origem, 'ε')].append(destino)
 
     estados_finais = [e.strip() for e in input("Informe os estados finais: ").split(',')]
 
-    afd_estados, afd_inicial, afd_transicoes, afd_finais = transformar_afn_para_afd(
-        estados, estado_inicial, transicoes, estados_finais, alfabeto
-    )
+    afd_estados, afd_inicial, afd_transicoes, afd_finais = transformar_afn_para_afd(estados, estado_inicial, transicoes, estados_finais, alfabeto)
 
-    print("\nAFD gerado (antes da minimização):")
+    print("\n================ AFD ================\n")
     print("Estados:", ", ".join(afd_estados))
     print("Estado inicial:", afd_inicial)
     print("Estados finais:", ", ".join(afd_finais))
     exibir_tabela_transicao(afd_estados, alfabeto, afd_transicoes)
+    exibir_transicoes(afd_transicoes)
 
-    min_estados, min_inicial, min_transicoes, min_finais = minimizar_afd(
-        afd_estados, afd_transicoes, afd_inicial, afd_finais, alfabeto
-    )
+    min_estados, min_inicial, min_transicoes, min_finais = minimizar_afd(afd_estados, afd_transicoes, afd_inicial, afd_finais, alfabeto)
 
-    print("\nAFD Mínimo resultante:")
+    print("\n================ AFD minimizado ================\n")
     print("Estados:", ", ".join(min_estados))
     print("Estado inicial:", min_inicial)
     print("Estados finais:", ", ".join(min_finais))
     exibir_tabela_transicao(min_estados, alfabeto, min_transicoes)
-
-    print("\nTransições do AFD Mínimo:")
-    for (estado, simbolo), destino in sorted(min_transicoes.items()):
-        print(f"{estado}{simbolo}{destino}")
+    print("\nTransições do AFD Minimo:")
+    exibir_transicoes(min_transicoes)
 
 if __name__ == "__main__":
     main()
