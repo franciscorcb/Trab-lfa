@@ -1,7 +1,7 @@
 from collections import defaultdict, deque
 from itertools import combinations
 
-# Conversão AFN -> AFD (com inserção de estado‑morto '∅')
+# Conversão AFN -> AFD
 def transformar_afn_para_afd(estados, estado_inicial, transicoes, estados_finais, alfabeto):
     afd_transicoes = {}
     novos_estados = []
@@ -99,14 +99,14 @@ def minimizar_afd(estados, transicoes, estado_inicial, estados_finais, alfabeto)
 
 # Exibição com colchetes só para estados normais e ∅ sem colchetes
 def exibir_tabela_transicao(estados, alfabeto, transicoes):
-    # ordena, deixando '∅' por último
+
     if "∅" in estados:
         estados_ord = sorted(e for e in estados if e != "∅")
         estados_ord.append("∅")
     else:
         estados_ord = sorted(estados)
 
-    # comprimento máximo (não conta colchetes do ∅)
+    
     max_len = max(len(e) + (2 if e != "∅" else 0) for e in estados_ord)
     largura = 12
 
@@ -117,18 +117,18 @@ def exibir_tabela_transicao(estados, alfabeto, transicoes):
     print("-" * len(header))
 
     for estado in estados_ord:
-        # só coloca colchetes se não for o morto
+
         est_fmt = f"({estado})" if estado != "∅" else estado
         row = f"{est_fmt:<{max_len}} | "
 
         for simbolo in sorted(alfabeto):
             destino = transicoes.get((estado, simbolo), "-")
             if destino == "∅":
-                dest_fmt = destino        # morto sem colchetes
+                dest_fmt = destino
             elif destino == "-":
-                dest_fmt = "-"            # sem transição
+                dest_fmt = "-"
             else:
-                dest_fmt = f"({destino})" # colchetes nos demais
+                dest_fmt = f"({destino})"
             row += f"{dest_fmt:^{largura}} | "
         print(row)
 
